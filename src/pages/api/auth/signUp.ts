@@ -4,7 +4,7 @@ import jwt, { Secret } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-const signIn: NextApiHandler<Secret> = async (request, response) => {
+const signUp: NextApiHandler<Secret> = async (request, response) => {
   if (request.method !== "POST") {
     return response.status(405).end();
   }
@@ -39,4 +39,4 @@ const signIn: NextApiHandler<Secret> = async (request, response) => {
   return response.status(201).json(token);
 };
 
-export default signIn;
+export default signUp;
