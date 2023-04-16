@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { useRouter } from "next/router";
 import React from "react";
 
 export interface PrincipalLayoutProps {
@@ -6,9 +7,10 @@ export interface PrincipalLayoutProps {
 }
 
 export default function PrincipalLayout({ children }: PrincipalLayoutProps) {
+  const { pathname } = useRouter();
   return (
     <>
-      <Header />
+      <Header currentPage={pathname} />
       {children}
     </>
   );
