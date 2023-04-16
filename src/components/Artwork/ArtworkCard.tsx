@@ -8,7 +8,7 @@ interface ArtWorkCardProps {
 
 export default function ArtworkCard({ artwork }: ArtWorkCardProps) {
   return (
-    <div className="relative block max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow h-44 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+    <div className="relative block max-w-sm mx-auto overflow-hidden bg-white border border-gray-200 rounded-lg sm:mx-0 min-w-[350px] sm:min-w-fit h-44 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <Image
         className="absolute object-cover w-full h-full"
         src={artwork.image_url}
