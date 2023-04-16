@@ -1,10 +1,42 @@
 import React from "react";
 import FormElement from "./FormElement";
 import Link from "next/link";
+import { useUserContext } from "@/context/User";
 
 export default function LoginForm() {
+  const { userLogin } = useUserContext();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const tokenResponse = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: e.currentTarget.email.value,
+          password: e.currentTarget.password.value,
+        }),
+      });
+
+      const token = (await tokenResponse.text()).slice(1, -1);
+      if (tokenResponse.status !== 200) throw new Error(token);
+
+      localStorage.setItem("token", token);
+
+      const userResponse = await fetch("/api/user", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = await userResponse.json();
+
+      userLogin(user);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
-    <form className="space-y-4 md:space-y-6" action="#">
+    <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
       <FormElement
         id="email"
         label="Your email"

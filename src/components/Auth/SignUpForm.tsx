@@ -8,7 +8,7 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/auth/signUp", {
+      const tokenResponse = await fetch("/api/auth/signUp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -16,8 +16,16 @@ export default function SignUpForm() {
           name: e.currentTarget.username.value,
         }),
       });
-      const user = await res.json();
-      if (!res.ok) throw Error(user.message);
+      const token = (await tokenResponse.text()).slice(1, -1);
+      if (tokenResponse.status !== 200) throw new Error(token);
+      
+      localStorage.setItem("token", token);
+
+      const userResponse = await fetch("/api/user", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = await userResponse.json();
 
       userSignUp(user);
     } catch (error) {
