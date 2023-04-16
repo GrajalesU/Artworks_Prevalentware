@@ -24,6 +24,7 @@ const artwork: NextApiHandler<Artwork> = async (request, response) => {
       title: request.body.title,
       artist: request.body.artist,
       image_url: request.body.image_url,
+      link: request.body.link,
     },
   });
 
