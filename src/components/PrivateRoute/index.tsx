@@ -16,12 +16,21 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   useEffect(() => {
     const getUser = async () => {
-      const userResponse = await fetch("/api/user", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const user = await userResponse.json();
-      userLogin(user);
+      try {
+        const userResponse = await fetch("/api/user", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (userResponse.status !== 200) throw new Error("Unauthorized");
+        const user = await userResponse.json();
+        userLogin(user);
+      } catch (e) {
+        console.log(e);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("token");
+        }
+        router.push("/login");
+      }
     };
 
     if (!user && !token) {
