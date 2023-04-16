@@ -2,9 +2,11 @@ import React from "react";
 import FormElement from "./FormElement";
 import Link from "next/link";
 import { useUserContext } from "@/context/User";
+import { useRouter } from "next/router";
 
 export default function LoginForm() {
   const { userLogin } = useUserContext();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ export default function LoginForm() {
       const user = await userResponse.json();
 
       userLogin(user);
+      router.push("/");
     } catch (error) {
       alert(error);
     }

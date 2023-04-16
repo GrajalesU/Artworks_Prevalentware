@@ -1,9 +1,11 @@
 import React from "react";
 import FormElement from "./FormElement";
 import { useUserContext } from "@/context/User";
+import { useRouter } from "next/router";
 
 export default function SignUpForm() {
   const { userSignUp } = useUserContext();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ export default function SignUpForm() {
       });
       const token = (await tokenResponse.text()).slice(1, -1);
       if (tokenResponse.status !== 200) throw new Error(token);
-      
+
       localStorage.setItem("token", token);
 
       const userResponse = await fetch("/api/user", {
@@ -28,6 +30,7 @@ export default function SignUpForm() {
       const user = await userResponse.json();
 
       userSignUp(user);
+      router.push("/");
     } catch (error) {
       alert(error);
     }
