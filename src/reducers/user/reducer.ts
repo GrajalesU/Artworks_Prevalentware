@@ -24,6 +24,10 @@ export function userReducer(
         user: action.payload,
       };
     case "LOG_OUT":
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
+
       return {
         ...state,
         user: null,
