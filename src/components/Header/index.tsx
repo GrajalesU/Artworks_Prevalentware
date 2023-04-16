@@ -20,7 +20,6 @@ export default function Header({ currentPage }: HeaderProps) {
               width={130}
               height={32}
               src="/artscope_logo.png"
-              className="aspect-video"
               alt="logo"
             />
           </Link>
