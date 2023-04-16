@@ -9,13 +9,11 @@ const authMiddleware =
   (handler: NextApiHandler): AuthenticatedNextApiHandler =>
   async (req, res) => {
     try {
-      // Verificar que el token exista en el encabezado de la solicitud
       const authHeader = req.headers.authorization;
       if (!authHeader) {
-        throw new Error("No se proporcionó un token de autenticación.");
+        throw new Error("Auth token not found");
       }
 
-      // Extraer el token de autorización del encabezado de la solicitud y verificar que sea válido
       const token = authHeader.replace("Bearer ", "");
       const decodedToken = jwt.verify(
         token,
@@ -23,10 +21,10 @@ const authMiddleware =
       );
 
       if (typeof decodedToken !== "object") {
-        throw new Error("El token de autenticación no es válido.");
+        throw new Error("Invalid token");
       }
 
-      const user = await prisma.user.findUnique({
+      const user = (await prisma.user.findUnique({
         where: {
           id: Number(decodedToken.id),
         },
@@ -37,23 +35,20 @@ const authMiddleware =
             },
           },
         },
-      }) as User;
+      })) as User;
 
       if (!user) {
         throw new Error(
-          "No se pudo encontrar el usuario correspondiente al token de autenticación."
+          "User not found. This should not happen. Please contact the administrator."
         );
       }
 
-      // Agregar el usuario al objeto de solicitud (request) para su uso posterior
       req.user = user;
 
-      // Continuar con el controlador de la solicitud
       return handler(req, res);
     } catch (error) {
-      // Manejar errores de autenticación
       console.error(error);
-      res.status(401).json({ message: "No se pudo autenticar al usuario." });
+      res.status(401).json({ message: "The user could not be authenticated" });
     }
   };
 
