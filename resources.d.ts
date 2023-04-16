@@ -18,4 +18,5 @@ type Artwork = {
   title: string;
   artist: string;
   image_url: string;
+  link: string;
 };

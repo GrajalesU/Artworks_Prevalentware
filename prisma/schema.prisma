@@ -31,5 +31,6 @@ model Artwork {
   title     String
   artist    String
   image_url String
+  link      String
   favorites Favorites[]
 }
