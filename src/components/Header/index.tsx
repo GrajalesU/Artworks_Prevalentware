@@ -1,4 +1,3 @@
-import "flowbite";
 import { useUserContext } from "@/context/User";
 import Image from "next/image";
 import Link from "next/link";
