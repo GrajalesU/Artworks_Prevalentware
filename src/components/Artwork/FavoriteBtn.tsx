@@ -9,7 +9,7 @@ interface FavoriteBtnProps {
 export default function FavoriteBtn({ artwork }: FavoriteBtnProps) {
   const [isFav, setIsFav] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { userAddFavorite, user } = useUserContext();
+  const { userAddFavorite, userRemoveFavorite, user } = useUserContext();
 
   useEffect(() => {
     if (user?.favorites.find((fav) => fav.artwork.title === artwork.title)) {
@@ -61,8 +61,38 @@ export default function FavoriteBtn({ artwork }: FavoriteBtnProps) {
     setIsFav(true);
   };
 
-  const handleClick = () => {
-    setIsFav(!isFav);
+  const handleRemoveFromFav = async () => {
+    try {
+      setLoading(true);
+
+      const artworkRealId = user?.favorites.find(
+        (fav) => fav.artwork.title === artwork.title
+      )?.artwork.id as number;
+
+      const favoriteRes = await fetch(`/api/favorites?id=${artworkRealId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ artwork_id: artworkRealId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const favorite = await favoriteRes.json();
+
+      if (!favorite) {
+        alert("Error removing from favorites");
+        return;
+      }
+
+      userRemoveFavorite(artworkRealId);
+    } catch (err) {
+      alert(err);
+    } finally {
+      setLoading(false);
+    }
+
+    setIsFav(false);
   };
 
   if (loading) {
@@ -91,7 +121,7 @@ export default function FavoriteBtn({ artwork }: FavoriteBtnProps) {
 
   if (isFav)
     return (
-      <button onClick={handleClick}>
+      <button onClick={handleRemoveFromFav}>
         <Image src="/fav.png" alt="Favorite" width={24} height={24} />
       </button>
     );
