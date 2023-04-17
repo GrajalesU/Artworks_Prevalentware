@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import { ARTISTS } from "@/utils/artists";
+import React, { useState, Dispatch, SetStateAction } from "react";
+import { SingleValue } from "react-select";
 import AsyncSelect from "react-select/async";
-import useSWR from "swr";
 
-export default function Search() {
-  const [inputValue, setInputValue] = useState("");
-  const { data } = useSWR(
-    `https://www.rijksmuseum.nl/en/search/advanced/terms?field=involvedMaker&q=daniel&key=KHn4xrLx`,
-    (url) => fetch(url).then((res) => res.json())
-  );
+interface SearchProps {
+  setArtist: Dispatch<SetStateAction<string>>;
+  setQuery: Dispatch<SetStateAction<string>>;
+}
 
-  console.log(data);
+export default function Search({ setArtist, setQuery }: SearchProps) {
+  const [artistValue, setArtistValue] = useState("");
 
-  const handleChange = (newValue: string) => {
-    setInputValue(newValue);
+  const handleChange = (
+    selected: SingleValue<{ value: string; label: string }>
+  ) => {
+    setArtistValue(selected?.value || "");
   };
+
+  const filterArtists = (inputValue: string) => {
+    return ARTISTS.filter((i) =>
+      i.value.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  };
+
+  const promiseOptions = (inputValue: string) =>
+    new Promise<typeof ARTISTS>((resolve) => {
+      setTimeout(() => {
+        resolve(filterArtists(inputValue));
+      }, 1000);
+    });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const currentValue = artistValue || ARTISTS[0].value;
+    const formattedValue = currentValue.split(" ").join("+");
+    setArtist(formattedValue);
+    setQuery((e.currentTarget[1] as HTMLInputElement).value);
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="flex">
         <label
           htmlFor="search-dropdown"
@@ -34,10 +58,12 @@ export default function Search() {
               marginRight: "4px",
               width: "200px",
             }),
+            menu: (provided) => ({ ...provided, zIndex: 20 }),
           }}
-          onInputChange={handleChange}
           placeholder="Artists..."
-          defaultOptions={[{ value: "", label: "All Artists" }]}
+          defaultOptions={ARTISTS}
+          onChange={handleChange}
+          loadOptions={promiseOptions}
           theme={(theme) => ({
             ...theme,
             borderRadius: 0,
@@ -47,13 +73,13 @@ export default function Search() {
               primary: "#f97316",
             },
           })}
+          cacheOptions
         />
         <input
           type="search"
           id="search-dropdown"
           className="z-20 block w-full p-2 text-sm text-gray-900 border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-l-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary-500"
           placeholder="Look for the title of your favorite artwork..."
-          required
         />
         <button
           type="submit"
