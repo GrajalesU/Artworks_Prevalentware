@@ -3,17 +3,26 @@ import React from "react";
 import useSWRInfinite from "swr/infinite";
 import ArtworkCard from "./ArtworkCard";
 
-export default function ArtworkList() {
+interface ArtworkListProps {
+  artist?: string;
+  q?: string;
+}
+
+export default function ArtworkList({ artist, q }: ArtworkListProps) {
   const { data, isLoading, isValidating, setSize, size } = useSWRInfinite(
     (index) =>
       `https://www.rijksmuseum.nl/api/nl/collection?key=${
         process.env.NEXT_PUBLIC_API_KEY
-      }&imgonly=true&ps=20&p=${index + 1}&culture=en&involvedMarker=`,
+      }&imgonly=true&ps=20&p=${
+        index + 1
+      }&culture=en&involvedMaker=${artist}&q=${q}`,
     async (url) => {
       const res = await fetch(url);
       return res.json();
     }
   );
+
+  //https://www.rijksmuseum.nl/api/nl/collection?key=KHn4xrLx&involvedMaker=Ed+van+der+Elsken&q=Vali
 
   const artworks = data ? [].concat(...data) : [];
   const formattedArtworks = artworks.map((artwork: RootObject) => {
