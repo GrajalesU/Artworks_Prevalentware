@@ -23,9 +23,9 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
         });
         if (userResponse.status !== 200) throw new Error("Unauthorized");
         const user = await userResponse.json();
+        
         userLogin(user);
       } catch (e) {
-        console.log(e);
         if (typeof window !== "undefined") {
           localStorage.removeItem("token");
         }

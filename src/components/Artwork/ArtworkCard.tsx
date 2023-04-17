@@ -31,7 +31,7 @@ export default function ArtworkCard({ artwork }: ArtWorkCardProps) {
             <h4 className="font-semibold text-gray-50 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
               {artwork.artist}
             </h4>
-            <FavoriteBtn />
+            <FavoriteBtn artwork={artwork}/>
           </div>
         </div>
       </div>
