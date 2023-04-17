@@ -4,6 +4,7 @@ import PrivateRoute from "@/components/PrivateRoute";
 import PrincipalLayout from "@/layout/Principal";
 import { initFlowbite } from "flowbite";
 import Search from "@/components/Search";
+import Head from "next/head";
 
 const Home = () => {
   const [artist, setArtist] = useState("");
@@ -14,18 +15,23 @@ const Home = () => {
   }, []);
 
   return (
-    <PrivateRoute>
-      <PrincipalLayout>
-        <div className=" bg-white border-t border-gray-300 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
-          <div className="max-w-screen-xl mx-auto">
-            <Search setArtist={setArtist} setQuery={setQuery} />
+    <>
+      <Head>
+        <title>ARTSCOPE | Home</title>
+      </Head>
+      <PrivateRoute>
+        <PrincipalLayout>
+          <div className=" bg-white border-t border-gray-300 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+            <div className="max-w-screen-xl mx-auto">
+              <Search setArtist={setArtist} setQuery={setQuery} />
+            </div>
           </div>
-        </div>
-        <div className="mx-auto">
-          <ArtworkList artist={artist} q={query} />
-        </div>
-      </PrincipalLayout>
-    </PrivateRoute>
+          <div className="mx-auto">
+            <ArtworkList artist={artist} q={query} />
+          </div>
+        </PrincipalLayout>
+      </PrivateRoute>
+    </>
   );
 };
 
